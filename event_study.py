@@ -66,10 +66,6 @@ def load_event_study_data(path: str) -> pd.DataFrame:
 
 
 def fill_missing_prices(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    If price values are missing, fill using interpolation within each company.
-    This should be used carefully; keep the original data too.
-    """
     df = df.copy()
     for col in ["stock_price", "market_price"]:
         if col in df.columns:
@@ -77,7 +73,7 @@ def fill_missing_prices(df: pd.DataFrame) -> pd.DataFrame:
                 lambda s: s.interpolate(method="linear", limit_direction="both")
             )
             df[col] = df.groupby("company")[col].transform(
-                lambda s: s.fillna(method="ffill").fillna(method="bfill")
+                lambda s: s.ffill().bfill()
             )
     return df
 
